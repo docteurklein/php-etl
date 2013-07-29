@@ -16,8 +16,6 @@ class DataMap implements TransformerInterface
 
     public function set($input, $target)
     {
-        $this->verifyCount($input);
-
         foreach ($this->map as $inputPropertyPath => $output) {
             if (is_object($input)) {
                 $inputValue = $input->$inputPropertyPath();
@@ -59,7 +57,7 @@ class DataMap implements TransformerInterface
         return $this->set($input, $target);
     }
 
-    private function verifyCount($input)
+    public function verifyCount($input)
     {
         if (count($input) !== count($this->map)) {
             throw new \LogicException(sprintf(

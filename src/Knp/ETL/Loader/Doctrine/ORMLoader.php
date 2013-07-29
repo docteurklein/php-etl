@@ -35,15 +35,15 @@ class ORMLoader
         }
 
         if ($this->counter++ % $this->flushEvery === 0 || $shouldFlush) {
-            $this->flush();
+            $this->flush($context);
         }
 
         if ($this->counter++ % $this->flushEvery === 0 || $shouldClear) {
-            $this->clear();
+            $this->clear($context);
         }
     }
 
-    public function flush()
+    public function flush(ContextInterface $context)
     {
         $this->doctrine->getManager()->flush();
         if (null !== $this->logger) {
@@ -51,7 +51,7 @@ class ORMLoader
         }
     }
 
-    public function clear()
+    public function clear(ContextInterface $context)
     {
         $this->doctrine->getManager()->clear();
         if (null !== $this->logger) {

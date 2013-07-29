@@ -25,6 +25,8 @@ class ObjectTransformer implements TransformerInterface
 
     public function transform(array $data, ContextInterface $context)
     {
+        $this->mapper->verifyCount($data);
+
         $id = $context->getIdentifier();
         if (null !== $this->logger) {
             $this->logger->info(sprintf('Transforming data with id #%s', $id));

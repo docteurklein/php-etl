@@ -29,5 +29,13 @@ class DBALLoader
 
         return $this->conn->insert($context->getTableName(), $data);
     }
+
+    public function flush(ContextInterface $context)
+    {
+    }
+
+    public function clear(ContextInterface $context)
+    {
+    }
 }
 

@@ -16,7 +16,10 @@ class CsvExtractor implements ExtractorInterface, \Iterator
 {
     use LoggerAwareTrait;
 
-    public function __construct($filename, $delimiter = ';', $enclosure = '"')
+    private $csv;
+    private $identifierColumn;
+
+    public function __construct($filename, $delimiter = ';', $enclosure = '"', $identifierColumn = null)
     {
         if (null !== $this->logger) {
             $this->logger->debug('extracting from: '.$filename);
@@ -25,11 +28,18 @@ class CsvExtractor implements ExtractorInterface, \Iterator
         $this->csv = new \SplFileObject($filename);
         $this->csv->setFlags(\SplFileObject::READ_CSV);
         $this->csv->setCsvControl($delimiter, $enclosure);
+
+        $this->identifierColumn = $identifierColumn;
     }
 
     public function extract(ContextInterface $context)
     {
-        return $this->csv->fgetcsv();
+        $data = $this->csv->fgetcsv();
+        if (null !== $this->identifierColumn) {
+            $context->setIdentifier($data[$this->identifierColumn]);
+        }
+
+        return $data;
     }
 
     public function rewind()

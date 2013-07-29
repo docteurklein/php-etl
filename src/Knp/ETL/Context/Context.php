@@ -63,6 +63,6 @@ class Context implements ContextInterface
      **/
     public function setIdentifier($id)
     {
-        $this->identifier = $identifier;
+        $this->identifier = $id;
     }
 }

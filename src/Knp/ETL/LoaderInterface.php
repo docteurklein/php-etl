@@ -16,5 +16,19 @@ interface LoaderInterface
      * @return mixed
      */
     function load($data, ContextInterface $context);
+
+    /**
+     * Flush the loader
+     *
+     * @param ContextInterface $context the shared context for current iteration / row / whatever
+     **/
+    function flush(ContextInterface $context);
+
+    /**
+     * Reset the loader
+     *
+     * @param ContextInterface $context the shared context for current iteration / row / whatever
+     **/
+    function clear(ContextInterface $context);
 }
 

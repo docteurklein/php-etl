@@ -28,15 +28,20 @@
     },
     "require-dev": {
         "phpspec/phpspec": "~2.0",
-        "doctrine/orm":  "~2.4"
+        "doctrine/orm":  "~2.4",
+        "symfony/finder": "~2.3",
+        "symfony/console": "~2.3",
+        "pimple/pimple": "~1.0"
     },
     "suggest": {
         "doctrine/orm": "To use ORM loader",
         "doctrine/dbal": "To use DBAL loader",
         "symfony/finder": "To use Regex-filename CSV extractor",
+        "symfony/console": "To use cli import command",
+        "pimple/pimple": "To configure your ETL process"
     },
     "autoload": {
-        "psr-0": { "Knp\\ETL": "src/" }
+        "psr-0": { "Knp\\ETL": "src/", "Entity": "" }
     },
     "minimum-stability": "dev",
     "extra": {
