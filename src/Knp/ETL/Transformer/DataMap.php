@@ -4,6 +4,7 @@ namespace Knp\ETL\Transformer;
 
 use Knp\ETL\TransformerInterface;
 use Knp\ETL\ContextInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class DataMap implements TransformerInterface
 {
@@ -16,30 +17,28 @@ class DataMap implements TransformerInterface
 
     public function set($input, $target)
     {
+        $accessor = PropertyAccess::createPropertyAccessor();
+        
         foreach ($this->map as $inputPropertyPath => $output) {
-            if (is_object($input)) {
-                $inputValue = $input->$inputPropertyPath();
-            } elseif (is_array($input)) {
-                $inputValue = $input[$inputPropertyPath];
+            if (is_array($input)) {
+                $path = sprintf('[%s]', $inputPropertyPath);
+            } elseif (is_object($input)) {
+                $path = $inputPropertyPath;
             } else {
                 throw new \InvalidArgumentException('Input should be either an object or array');
             }
 
-            if (is_array($output)) {
-                $outputPropertyPath = array_keys($output)[0];
-                $transformedValue   = $output[$outputPropertyPath]($inputValue, $input);
-            } else {
-                $outputPropertyPath = $output;
-                $transformedValue = $inputValue;
-            }
+            $value = $accessor->getValue($input, $path);
 
             if (is_object($target)) {
-                $target->$outputPropertyPath($transformedValue);
+                $path = $output;
             } elseif (is_array($target)) {
-                $target[$outputPropertyPath] = $transformedValue;
+                $path = sprintf('[%s]', $output);
             } else {
                 throw new \InvalidArgumentException('Target should be either an object or array');
             }
+
+            $accessor->setValue($target, $path, $value);
         }
     }
 
