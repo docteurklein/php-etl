@@ -44,7 +44,7 @@ class DataMap implements TransformerInterface
 
     public function transform(array $data, ContextInterface $context)
     {
-        $target = [];
+        $target = $context->getTransformedData();
 
         $this->set($data, $target);
 
