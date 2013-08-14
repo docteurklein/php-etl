@@ -37,7 +37,10 @@ class JsonExtractor implements ExtractorInterface, \Iterator
 
     public function extract(ContextInterface $context)
     {
-        return $this->current();
+        $current = $this->current();
+        $this->next();
+
+        return $current;
     }
 
     public function rewind()
@@ -75,10 +78,14 @@ class JsonExtractor implements ExtractorInterface, \Iterator
         if (null === $this->json) {
             $json = json_decode($this->getContent());
 
+            if (null === $json) {
+                throw new \RuntimeException(sprintf('%s could not be parsed as json file', $this->resource));
+            }
+
             if ($this->startNode) {
                 $json = $json->{$this->startNode};
             }
-            
+
             $this->json = new \ArrayIterator($json);
         }
 
