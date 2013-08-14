@@ -15,7 +15,7 @@ class DataMap implements TransformerInterface
         $this->map = $map;
     }
 
-    public function set($input, $target)
+    public function set($input, &$target)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         
