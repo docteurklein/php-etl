@@ -20,9 +20,9 @@ class ObjectTransformerSpec extends ObjectBehavior
         $doctrine->getRepository(self::className)->willReturn($repository);
 
         $map = new DataMap([
-            0 => 'setId',
-            1 => 'setName',
-            2 => 'setSurname',
+            0 => 'id',
+            1 => 'name',
+            2 => 'surname',
         ]);
 
         $this->beConstructedWith(self::className, $map, $doctrine);
