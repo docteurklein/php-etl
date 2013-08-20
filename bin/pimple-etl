@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputArgument;
+
+$input = new ArgvInput(null, new InputDefinition([
+    new InputArgument('path', InputArgument::REQUIRED, 'The path to the pimple config'),
+]));
+
+$c = require $input->getArgument('path');
+
+foreach ($c['etl'] as $etl) {
+    $extractor = $etl['e'];
+    $transformer = $etl['t'];
+    $loader = $etl['l'];
+    $context = $etl['c'];
+
+    while (null !== $input = $extractor->extract($context)) {
+        try {
+            $output = $transformer->transform($input, $context);
+            $loader->load($output, $context);
+        }
+        catch (\LogicException $e) {
+        }
+    }
+
+    $loader->flush($context);
+}
+
+$loader->flush($context);

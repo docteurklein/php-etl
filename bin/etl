@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
+
+$input = new ArgvInput(null, new InputDefinition([
+    new InputOption('extract',   'e', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL),
+    new InputOption('transform', 't', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL),
+    new InputOption('load',      'l', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL),
+]));
+
+$c = new Pimple;
+
+foreach (array_range(0, count($input->getOption('extract'))) as $key) {
+    $extractor = $c[$input->getOption('extract')[$key]];
+    $transformer = $c[$input->getOption('transform')[$key]];
+    $loader = $c[$input->getOption('load')[$key]];
+
+    foreach ($extractor as $input) {
+        $output = $transformer->transform($input);
+        $loader->load($input);
+    }
+
+    $loader->flush();
+}
+
+$loader->flush();
