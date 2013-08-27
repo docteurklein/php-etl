@@ -15,7 +15,7 @@ class DataMap implements TransformerInterface
         $this->map = $map;
     }
 
-    public function set($input, $target)
+    public function set($input, &$target)
     {
         $accessor = PropertyAccess::createPropertyAccessor();
         
@@ -44,7 +44,7 @@ class DataMap implements TransformerInterface
 
     public function transform(array $data, ContextInterface $context)
     {
-        $target = [];
+        $target = $context->getTransformedData();
 
         $this->set($data, $target);
 

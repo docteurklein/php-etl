@@ -16,6 +16,8 @@ class Context implements ContextInterface
     public function __construct($id = null)
     {
         $this->identifier = $id;
+        $this->extractedData = [];
+        $this->transformedData = [];
     }
 
     /**
