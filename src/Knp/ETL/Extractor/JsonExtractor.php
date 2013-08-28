@@ -78,6 +78,11 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
         return $this->getIterator()->count();
     }
 
+    public function seek($position)
+    {
+        return $this->getIterator()->seek($position);
+    }
+
     private function getIterator()
     {
         if (null === $this->json) {
