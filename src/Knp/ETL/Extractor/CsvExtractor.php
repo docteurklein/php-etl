@@ -12,7 +12,7 @@ use Knp\ETL\ContextInterface;
  * @author     Florian Klein <florian.klein@free.fr>
  * @TODO just make a LoggableIterator a composition of \Iterator and Logger ?
  */
-class CsvExtractor implements ExtractorInterface, \Iterator
+class CsvExtractor implements ExtractorInterface, \Iterator, \Countable
 {
     use LoggerAwareTrait;
 
@@ -70,5 +70,15 @@ class CsvExtractor implements ExtractorInterface, \Iterator
     public function valid()
     {
         return $this->csv->valid();
+    }
+
+    public function count()
+    {
+        $current = $this->csv->key();
+        $this->csv->seek($this->csv->getSize());
+        $end = $this->csv->key() + 1; // lines started at zéro
+        $this->csv->seek($current);
+
+        return $end;
     }
 }
