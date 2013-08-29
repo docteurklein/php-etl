@@ -29,4 +29,11 @@ class JsonExtractorSpec extends ObjectBehavior
 
         $this->shouldThrow('\RuntimeException')->duringExtract(new Context);
     }
+
+    function it_should_count_lines()
+    {
+        $this->beConstructedWith(__DIR__.'/Fixture/TransformableEntity.json');
+
+        $this->count()->shouldBe(3);
+    }
 }

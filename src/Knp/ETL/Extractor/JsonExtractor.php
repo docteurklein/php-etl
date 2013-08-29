@@ -10,7 +10,7 @@ use Psr\Log\LoggerAwareTrait;
 /**
  * @author Timothée Barray <tim@amicalement-web.net>
  */
-class JsonExtractor implements ExtractorInterface, \Iterator
+class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
 {
     use LoggerAwareTrait;
 
@@ -71,6 +71,11 @@ class JsonExtractor implements ExtractorInterface, \Iterator
     public function valid()
     {
         return $this->getIterator()->valid();
+    }
+
+    public function count()
+    {
+        return $this->getIterator()->count();
     }
 
     private function getIterator()
