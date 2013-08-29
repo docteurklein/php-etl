@@ -81,4 +81,9 @@ class CsvExtractor implements ExtractorInterface, \Iterator, \Countable
 
         return $end;
     }
+
+    public function seek($position)
+    {
+        return $this->csv->seek($position);
+    }
 }
