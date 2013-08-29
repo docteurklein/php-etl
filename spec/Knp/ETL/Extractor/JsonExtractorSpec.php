@@ -36,4 +36,21 @@ class JsonExtractorSpec extends ObjectBehavior
 
         $this->count()->shouldBe(3);
     }
+
+    function it_should_move_to_given_position()
+    {
+        $this->beConstructedWith(__DIR__.'/Fixture/TransformableEntity.json');
+
+        $this->seek(1);
+        $entity = $this->current();
+        $entity->id->shouldBe(145);
+        $entity->name->shouldBe('Chuck');
+        $entity->surname->shouldBe('Norris');
+
+        $this->seek(0);
+        $entity = $this->current();
+        $entity->id->shouldBe(123);
+        $entity->name->shouldBe('John');
+        $entity->surname->shouldBe('Smith');
+    }
 }
