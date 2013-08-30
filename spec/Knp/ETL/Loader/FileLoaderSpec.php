@@ -9,7 +9,7 @@ class FileLoaderSpec extends ObjectBehavior
 {
     function let()
     {
-        $this->beConstructedWith(sys_get_temp_dir().'/etl-test');
+        $this->beConstructedWith(new \SplFileObject(sys_get_temp_dir().'/etl-test', 'w+'));
     }
 
     function it_should_load_existing_data(\stdClass $entity)

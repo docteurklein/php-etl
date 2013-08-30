@@ -4,6 +4,7 @@ namespace Knp\ETL\Loader;
 use Psr\Log\LoggerAwareTrait;
 use Knp\ETL\ContextInterface;
 use Knp\ETL\LoaderInterface;
+use SplFileObject;
 
 class FileLoader implements LoaderInterface
 {
@@ -11,9 +12,9 @@ class FileLoader implements LoaderInterface
 
     protected $file;
 
-    public function __construct($filename, $mode = 'a+')
+    public function __construct(SplFileObject $file)
     {
-        $this->file = new \SplFileObject($filename, $mode);
+        $this->file = $file;
     }
 
     public function load($data, ContextInterface $context)
