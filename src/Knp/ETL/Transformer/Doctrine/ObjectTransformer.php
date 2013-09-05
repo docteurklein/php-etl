@@ -23,7 +23,7 @@ class ObjectTransformer implements TransformerInterface
         $this->doctrine = $doctrine;
     }
 
-    public function transform(array $data, ContextInterface $context)
+    public function transform($data, ContextInterface $context)
     {
         $this->mapper->verifyCount($data);
 
