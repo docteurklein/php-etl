@@ -14,7 +14,7 @@ class CallbackTransformer implements TransformerInterface
         $this->callback = $callback;
     }
 
-    public function transform(array $data, ContextInterface $context)
+    public function transform($data, ContextInterface $context)
     {
         $target = $context->getTransformedData();
 
