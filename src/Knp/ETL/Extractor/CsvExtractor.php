@@ -18,6 +18,7 @@ class CsvExtractor implements ExtractorInterface, \Iterator, \Countable
 
     private $csv;
     private $identifierColumn;
+    private $nbLines;
 
     public function __construct($filename, $delimiter = ';', $enclosure = '"', $identifierColumn = null)
     {
@@ -74,12 +75,30 @@ class CsvExtractor implements ExtractorInterface, \Iterator, \Countable
 
     public function count()
     {
-        $current = $this->csv->key();
-        $this->csv->seek($this->csv->getSize());
-        $end = $this->csv->key() + 1; // lines started at zéro
-        $this->csv->seek($current);
+        if (null === $this->nbLines) {
+            // Store flags and position
+            $flags = $this->csv->getFlags();
+            $current = $this->csv->key();
+     
+            // Prepare count by resetting flags as READ_CSV for example make the trick very slow
+            $this->csv->setFlags(null);
+     
+            // Go to the larger INT we can as seek will not throw exception, errors, notice if we go beyond the bottom line
+            $this->csv->seek(PHP_INT_MAX);
+     
+            // We store the key position
+            // As key starts at 0, we add 1
+            $this->nbLines = $this->csv->key() + 1;
+     
+            // We move to old position
+            // As seek method is longer with line number < to the max line number, it is better to count at the beginning of iteration
+            $this->csv->seek($current);
+     
+            // Re set flags
+            $this->csv->setFlags($flags);
+        }
 
-        return $end;
+        return $this->nbLines; 
     }
 
     public function seek($position)
