@@ -18,13 +18,26 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
     private $identifierColumn;
     private $resource;
     private $adapter;
+    private $path;
 
     /**
+     * Regarding the following json structure :
+     * {
+     *  items: [{
+     *      'name': 'Riri'
+     *  }, {
+     *      'name': 'Fifi'
+     *  }, {
+     *      'name': 'Loulou'
+     *  }] 
+     * }
+     * You can extract only all names with $path value : "items.*.name"
+     *
      * @param string $resource Filename or URL for the json file
-     * @param string $startNode The node in json file you want to pass through
+     * @param string $path The path in json file to go to your target nodes. Example : "nodes.*.node"
      * @param Closure $adapter A closure which wraps the way to get the content of json file
      */
-    public function __construct($resource, $startNode = null, \Closure $adapter = null)
+    public function __construct($resource, $path = null, \Closure $adapter = null)
     {
         if (null !== $this->logger) {
             $this->logger->debug('extracting from: '.$resource);
@@ -32,7 +45,10 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
 
         $this->resource = $resource;
         $this->adapter = $adapter;
-        $this->startNode = $startNode;
+
+        if (is_string($path)) {
+            $this->path = explode('.', $path);
+        }
     }
 
     public function extract(ContextInterface $context)
@@ -92,9 +108,9 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
                 throw new \RuntimeException(sprintf('%s could not be parsed as json file', $this->resource));
             }
 
-            if ($this->startNode) {
-                $json = $json->{$this->startNode};
-            }
+            if (is_array($this->path)) {
+                $json = $this->parseJson(new \RecursiveArrayIterator($json), array(), 0);
+            } 
 
             $this->json = new \ArrayIterator($json);
         }
@@ -111,5 +127,32 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
         $adapter = $this->adapter;
 
         return $adapter($this->resource);
+    }
+
+    private function parseJson(\RecursiveArrayIterator $json, array $data, $level)
+    {
+        foreach ($json as $k => $j) {
+            if (!isset($this->path[$level])) {
+                return $data;
+            }
+
+            if ($k !== $this->path[$level] && $this->path[$level] !== '*') {
+                continue;
+            }
+
+            if ($k === end($this->path)) {
+                if (is_array($j)) {
+                    $data = array_merge($data, $j);
+                } else {
+                    $data[] = $j;
+                }
+            }
+
+            if ($json->hasChildren()) {
+                $data = $this->parseJson($json->getChildren(), $data, $level + 1);
+            }
+        }
+
+        return $data;
     }
 }

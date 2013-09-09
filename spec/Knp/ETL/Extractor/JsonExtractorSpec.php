@@ -53,4 +53,15 @@ class JsonExtractorSpec extends ObjectBehavior
         $entity->name->shouldBe('John');
         $entity->surname->shouldBe('Smith');
     }
+
+    function it_should_returns_only_name()
+    {
+        $this->beConstructedWith(__DIR__.'/Fixture/TransformableEntity.json', '*.name');
+
+        $e = $this->extract(new Context);
+        $e->shouldBe('John');
+
+        $e = $this->extract(new Context);
+        $e->shouldBe('Chuck');
+    }
 }
