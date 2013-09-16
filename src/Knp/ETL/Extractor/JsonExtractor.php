@@ -110,7 +110,12 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
 
             if (is_array($this->path)) {
                 $json = $this->parseJson(new \RecursiveArrayIterator($json), array(), 0);
-            } 
+            }
+
+            // If we gets only an object, put it in array to avoid iterate on its properties
+            if (!is_array($json)) {
+                $json = array($json);
+            }
 
             $this->json = new \ArrayIterator($json);
         }
