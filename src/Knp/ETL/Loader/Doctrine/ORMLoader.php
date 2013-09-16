@@ -14,6 +14,7 @@ class ORMLoader
     private $counter = 0;
     private $flushEvery;
     private $doctrine;
+    private $entityClass;
 
     public function __construct(ManagerRegistry $doctrine, $flushEvery = 100)
     {
@@ -23,6 +24,10 @@ class ORMLoader
 
     public function load($entity, ContextInterface $context)
     {
+        if (null === $this->entityClass) {
+            $this->entityClass = get_class($entity);
+        }
+        
         $this->doctrine->getManager()->persist($entity);
 
         $shouldFlush = $shouldClear = false;
@@ -55,7 +60,7 @@ class ORMLoader
 
     public function clear(ContextInterface $context)
     {
-        $this->doctrine->getManager()->clear();
+        $this->doctrine->getManager()->clear($this->entityClass);
         if (null !== $this->logger) {
             $this->logger->debug(sprintf('clear after %d persist hits', $this->counter));
         }
