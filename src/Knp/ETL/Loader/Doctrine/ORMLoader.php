@@ -34,11 +34,13 @@ class ORMLoader
             $context->shouldClear(false); // TODO really ?
         }
 
-        if ($this->counter++ % $this->flushEvery === 0 || $shouldFlush) {
+        $this->counter++;
+
+        if ($this->counter % $this->flushEvery === 0 || $shouldFlush) {
             $this->flush($context);
         }
 
-        if ($this->counter++ % $this->flushEvery === 0 || $shouldClear) {
+        if ($this->counter % $this->flushEvery === 0 || $shouldClear) {
             $this->clear($context);
         }
     }
