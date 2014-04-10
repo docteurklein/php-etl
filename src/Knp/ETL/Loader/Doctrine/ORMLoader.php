@@ -6,8 +6,9 @@ use Psr\Log\LoggerAwareTrait;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\ETL\ContextInterface;
 use Knp\ETL\Context\Doctrine\ORMContext;
+use Knp\ETL\LoaderInterface;
 
-class ORMLoader
+class ORMLoader implements LoaderInterface
 {
     use LoggerAwareTrait;
 

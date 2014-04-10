@@ -4,11 +4,12 @@ namespace Knp\ETL\Loader\Doctrine;
 
 use Doctrine\DBAL\Connection;
 use Knp\ETL\ContextInterface;
+use Knp\ETL\LoaderInterface;
 
 /**
  * @author     Florian Klein <florian.klein@free.fr>
  */
-class DBALLoader
+class DBALLoader implements LoaderInterface
 {
     private $conn;
 
