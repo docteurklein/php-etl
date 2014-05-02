@@ -32,14 +32,16 @@
         "doctrine/orm":  "~2.4",
         "symfony/finder": "~2.3",
         "symfony/console": "~2.3",
-        "pimple/pimple": "~1.0"
+        "pimple/pimple": "~1.0",
+        "phpoffice/phpexcel": "~1.8"
     },
     "suggest": {
         "doctrine/orm": "To use ORM loader",
         "doctrine/dbal": "To use DBAL loader",
         "symfony/finder": "To use Regex-filename CSV extractor",
         "symfony/console": "To use cli import command",
-        "pimple/pimple": "To configure your ETL process"
+        "pimple/pimple": "To configure your ETL process",
+        "phpoffice/phpexcel": "To use Excel files extractor"
     },
     "autoload": {
         "psr-0": { "Knp\\ETL": "src/", "Entity": "" }
