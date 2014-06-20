@@ -6,6 +6,7 @@ require __DIR__.'/../vendor/autoload.php';
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 $input = new ArgvInput(null, new InputDefinition([
     new InputArgument('path', InputArgument::REQUIRED, 'The path to the pimple config'),
@@ -13,22 +14,11 @@ $input = new ArgvInput(null, new InputDefinition([
 
 $c = require $input->getArgument('path');
 
+
+$workflow = new Workflow(new EventDispatcher());
+
 foreach ($c['etl'] as $etl) {
-    $extractor = $etl['e'];
-    $transformer = $etl['t'];
-    $loader = $etl['l'];
-    $context = $etl['c'];
-
-    while (null !== $input = $extractor->extract($context)) {
-        try {
-            $output = $transformer->transform($input, $context);
-            $loader->load($output, $context);
-        }
-        catch (\LogicException $e) {
-        }
-    }
-
-    $loader->flush($context);
+  $workflow->process($etl);
 }
 
-$loader->flush($context);
+$workflow->flush($workflow->getContext());
