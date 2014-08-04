@@ -35,10 +35,11 @@ class CsvExtractor implements ExtractorInterface, \Iterator, \Countable
 
     public function extract(ContextInterface $context)
     {
-        $data = $this->csv->fgetcsv();
+        $data = $this->csv->current();
         if (null !== $this->identifierColumn) {
             $context->setIdentifier($data[$this->identifierColumn]);
         }
+        $this->csv->next();
 
         return $data;
     }
