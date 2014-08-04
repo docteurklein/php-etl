@@ -28,9 +28,9 @@ class CsvExtractorSpec extends ObjectBehavior
         $this->beConstructedWith(__DIR__.'/Fixture/TransformableEntity.csv');
 
         $this->seek(1);
-        $this->current()->shouldBe(['2', 'c', 'd']);
+        $this->extract(new Context)->shouldBe(['2', 'c', 'd']);
 
         $this->seek(0);
-        $this->current()->shouldBe(['1', 'a', 'b']);
+        $this->extract(new Context)->shouldBe(['1', 'a', 'b']);
     }
 }
