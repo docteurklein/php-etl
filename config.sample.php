@@ -8,13 +8,14 @@ use Knp\ETL\Context\Doctrine\ORMContext;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\ETL\Loader\Doctrine\Registry;
 use Doctrine\ORM\Tools\Setup;
+use Pimple\Container;
 
 require_once __DIR__.'/vendor/autoload.php';
 
-$c = new \Pimple([
-    'path' => __DIR__.'/csv/',
+$c = new Container([
+    'path' => __DIR__.'/csv',
 ]);
-$c['doctrine'] = $c->share(function($c) {
+$c['doctrine'] = function($c) {
     $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src"), true);
     $conn = array(
         'driver' => 'pdo_sqlite',
@@ -28,9 +29,9 @@ $c['doctrine'] = $c->share(function($c) {
     $tool->createSchema([$em->getClassMetadata('Entity\User')]);
 
     return new Registry($c, 'ORM', ['default' => $conn], ['default' => $c['em']], 'default', 'default', 'Doctrine\ORM\Proxy\Proxy');
-});
+};
 $c['etl'] = [
-    'users' => new Pimple([
+    'users' => new Container([
         'parent' => $c,
         'e' => function($c) { return new CsvExtractor($c['parent']['path'].'/users.csv', ';', '"', 0); },
         't' => function($c) {
