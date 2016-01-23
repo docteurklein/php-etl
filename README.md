@@ -3,7 +3,7 @@ php-etl
 
 [![Build Status](https://travis-ci.org/docteurklein/php-etl.png?branch=master)](https://travis-ci.org/docteurklein/php-etl)
 
-php-etl is a PHP 5.4+ library that follows the well-known `Extract | Transform | Load` pattern.
+php-etl is a PHP 5.5+ library that follows the well-known `Extract | Transform | Load` pattern.
 
 It provides a few extractors, a few transformers and a few loaders to import csv data into a RDBM for example.
 
