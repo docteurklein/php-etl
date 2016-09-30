@@ -9,10 +9,7 @@ class CsvLoader extends FileLoader
     public function load($data, ContextInterface $context)
     {
         $r = $this->file->fputcsv($data);
-
-        if (null !== $this->logger) {
-            $this->logger->debug(sprintf('Wrote %s bytes in %s', $r, $this->file->getBasename()));
-        }
+        $this->logger->debug('Write a field array as a CSV line', ['data' => $data, 'filename' => $this->file->getBasename(), 'bytes' => $r]);
 
         return $r;
     }

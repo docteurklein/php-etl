@@ -5,8 +5,9 @@ namespace Knp\ETL\Transformer\Doctrine;
 use Knp\ETL\TransformerInterface;
 use Knp\ETL\ContextInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Psr\Log\LoggerAwareTrait;
 use Knp\ETL\Transformer\DataMap;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 class ObjectTransformer implements TransformerInterface
 {
@@ -21,6 +22,7 @@ class ObjectTransformer implements TransformerInterface
         $this->className = $className;
         $this->mapper = $mapper;
         $this->doctrine = $doctrine;
+        $this->logger = new NullLogger();
     }
 
     public function transform($data, ContextInterface $context)
@@ -28,18 +30,14 @@ class ObjectTransformer implements TransformerInterface
         $this->mapper->verifyCount($data);
 
         $id = $context->getIdentifier();
-        if (null !== $this->logger) {
-            $this->logger->info(sprintf('Transforming data with id #%s', $id));
-        }
+        $this->logger->info('Transforming data', ['id' => $id]);
 
         $object = $this->doctrine->getRepository($this->className)->find($id);
 
         if (null === $object) {
             //TODO use a configurable factory here
             $object = new $this->className;
-            if (null !== $this->logger) {
-                $this->logger->info(sprintf('Creating new object "%s"', $this->className));
-            }
+            $this->logger->info('Creating new object', ['class' => $this->className]);
         }
 
         $this->mapper->set($data, $object);

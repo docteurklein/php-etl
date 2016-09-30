@@ -7,6 +7,7 @@ use Psr\Log\LoggerAwareTrait;
 
 use Knp\ETL\ContextInterface;
 use Knp\ETL\ExtractorInterface;
+use Psr\Log\NullLogger;
 
 /**
  * @author Kévin Gomez <contact@kevingomez.fr>
@@ -22,9 +23,9 @@ class ExcelExtractor implements ExtractorInterface, \Iterator, \Countable
 
     public function __construct($filename, $identifierColumn = null, $headerRowNumber = 1, $activeSheet = null)
     {
-        if (null !== $this->logger) {
-            $this->logger->debug('extracting from: '.$filename);
-        }
+        $this->logger = new NullLogger();
+        // @todo don't log when the logger is not really yet injected (or inject logger directly in constructor)
+        $this->logger->debug('Extracting Excel', ['filename' => $filename]);
 
         $excel = PHPExcel_IOFactory::load($filename);
 
@@ -81,9 +82,7 @@ class ExcelExtractor implements ExtractorInterface, \Iterator, \Countable
     public function next()
     {
         $next = $this->worksheetIterator->next();
-        if (null !== $this->logger) {
-            $this->logger->debug(sprintf('%d', $this->key()));
-        }
+        $this->logger->debug('Next Excel element', ['key' => $this->key()]);
 
         return $next;
     }

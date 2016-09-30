@@ -6,6 +6,7 @@ use Knp\ETL\ExtractorInterface;
 use Knp\ETL\ContextInterface;
 
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * @author Timothée Barray <tim@amicalement-web.net>
@@ -39,9 +40,9 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
      */
     public function __construct($resource, $path = null, \Closure $adapter = null)
     {
-        if (null !== $this->logger) {
-            $this->logger->debug('extracting from: '.$resource);
-        }
+        $this->logger = new NullLogger();
+        // @todo don't log when the logger is not really yet injected (or inject logger directly in constructor)
+        $this->logger->debug('Extracting JSON', ['path' => $resource]);
 
         $this->resource = $resource;
         $this->adapter = $adapter;
@@ -77,9 +78,7 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
     public function next()
     {
         $next = $this->getIterator()->next();
-        if (null !== $this->logger) {
-            $this->logger->debug(sprintf('%s:%d', $this->resource, $this->key()));
-        }
+        $this->logger->debug('Next JSON element', ['path' => $this->resource, 'key' => $this->key()]);
 
         return $next;
     }

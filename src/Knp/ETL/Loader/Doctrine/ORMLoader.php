@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\ETL\ContextInterface;
 use Knp\ETL\Context\Doctrine\ORMContext;
 use Knp\ETL\LoaderInterface;
+use Psr\Log\NullLogger;
 
 class ORMLoader implements LoaderInterface
 {
@@ -21,6 +22,7 @@ class ORMLoader implements LoaderInterface
     {
         $this->doctrine = $doctrine;
         $this->flushEvery = $flushEvery;
+        $this->logger = new NullLogger();
     }
 
     public function load($entity, ContextInterface $context)
@@ -54,17 +56,13 @@ class ORMLoader implements LoaderInterface
     public function flush(ContextInterface $context)
     {
         $this->doctrine->getManager()->flush();
-        if (null !== $this->logger) {
-            $this->logger->debug(sprintf('flush after %d persist hits', $this->counter));
-        }
+        $this->logger->debug('Doctrine flush', ['persist_hits' => $this->counter]);
     }
 
     public function clear(ContextInterface $context)
     {
         $this->doctrine->getManager()->clear($this->entityClass);
-        if (null !== $this->logger) {
-            $this->logger->debug(sprintf('clear after %d persist hits', $this->counter));
-        }
+        $this->logger->debug('Doctrine clean', ['persist_hits' => $this->counter]);
     }
 }
 
