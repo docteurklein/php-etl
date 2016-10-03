@@ -6,23 +6,22 @@ use Knp\ETL\TransformerInterface;
 use Knp\ETL\ContextInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\ETL\Transformer\DataMap;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class ObjectTransformer implements TransformerInterface
 {
-    use LoggerAwareTrait;
-
     private $className;
     private $mapper;
     private $doctrine;
+    private $logger;
 
-    public function __construct($className, DataMap $mapper, ManagerRegistry $doctrine)
+    public function __construct($className, DataMap $mapper, ManagerRegistry $doctrine, LoggerInterface $logger = null)
     {
         $this->className = $className;
         $this->mapper = $mapper;
         $this->doctrine = $doctrine;
-        $this->logger = new NullLogger();
+        $this->logger = $logger ?: new NullLogger();
     }
 
     public function transform($data, ContextInterface $context)

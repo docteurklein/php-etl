@@ -3,10 +3,9 @@
 namespace Knp\ETL\Extractor;
 
 use PHPExcel_IOFactory;
-use Psr\Log\LoggerAwareTrait;
-
 use Knp\ETL\ContextInterface;
 use Knp\ETL\ExtractorInterface;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -14,17 +13,15 @@ use Psr\Log\NullLogger;
  */
 class ExcelExtractor implements ExtractorInterface, \Iterator, \Countable
 {
-    use LoggerAwareTrait;
-
     protected $worksheetIterator;
     protected $identifierColumn;
     protected $nbLines;
     protected $headerRowNumber = 1;
+    protected $logger;
 
-    public function __construct($filename, $identifierColumn = null, $headerRowNumber = 1, $activeSheet = null)
+    public function __construct($filename, $identifierColumn = null, $headerRowNumber = 1, $activeSheet = null, LoggerInterface $logger = null)
     {
-        $this->logger = new NullLogger();
-        // @todo don't log when the logger is not really yet injected (or inject logger directly in constructor)
+        $this->logger = $logger ?: new NullLogger();
         $this->logger->debug('Extracting Excel', ['filename' => $filename]);
 
         $excel = PHPExcel_IOFactory::load($filename);

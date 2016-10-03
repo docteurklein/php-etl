@@ -1,21 +1,20 @@
 <?php
 namespace Knp\ETL\Loader;
 
-use Psr\Log\LoggerAwareTrait;
 use Knp\ETL\ContextInterface;
 use Knp\ETL\LoaderInterface;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SplFileObject;
 
 class FileLoader implements LoaderInterface
 {
-    use LoggerAwareTrait;
-
     protected $file;
+    protected $logger;
 
-    public function __construct(SplFileObject $file)
+    public function __construct(SplFileObject $file, LoggerInterface $logger = null)
     {
-        $this->logger = new NullLogger();
+        $this->logger = $logger ?: new NullLogger();
         $this->file = $file;
     }
 

@@ -2,11 +2,9 @@
 
 namespace Knp\ETL\Extractor;
 
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\Finder\Finder;
-
 use Knp\ETL\ExtractorInterface;
-use Psr\Log\LoggerAwareTrait;
 use Knp\ETL\ContextInterface;
 
 /**
@@ -15,16 +13,14 @@ use Knp\ETL\ContextInterface;
  */
 class CsvExtractor implements ExtractorInterface, \Iterator, \Countable
 {
-    use LoggerAwareTrait;
-
     private $csv;
     private $identifierColumn;
     private $nbLines;
+    private $logger;
 
-    public function __construct($filename, $delimiter = ';', $enclosure = '"', $identifierColumn = null)
+    public function __construct($filename, $delimiter = ';', $enclosure = '"', $identifierColumn = null, LoggerInterface $logger = null)
     {
-        $this->logger = new NullLogger();
-        // @todo don't log when the logger is not really yet injected (or inject logger directly in constructor)
+        $this->logger = $logger ?: new NullLogger();
         $this->logger->debug('Extracting CSV', ['filepath' => $filename]);
 
         $this->csv = new \SplFileObject($filename);

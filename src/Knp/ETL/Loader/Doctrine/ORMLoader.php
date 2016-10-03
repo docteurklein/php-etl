@@ -2,27 +2,26 @@
 
 namespace Knp\ETL\Loader\Doctrine;
 
-use Psr\Log\LoggerAwareTrait;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Knp\ETL\ContextInterface;
 use Knp\ETL\Context\Doctrine\ORMContext;
 use Knp\ETL\LoaderInterface;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class ORMLoader implements LoaderInterface
 {
-    use LoggerAwareTrait;
-
     private $counter = 0;
     private $flushEvery;
     private $doctrine;
     private $entityClass;
+    private $logger;
 
-    public function __construct(ManagerRegistry $doctrine, $flushEvery = 100)
+    public function __construct(ManagerRegistry $doctrine, $flushEvery = 100, LoggerInterface $logger = null)
     {
         $this->doctrine = $doctrine;
         $this->flushEvery = $flushEvery;
-        $this->logger = new NullLogger();
+        $this->logger = $logger ?: new NullLogger();
     }
 
     public function load($entity, ContextInterface $context)

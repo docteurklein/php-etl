@@ -4,7 +4,7 @@ namespace Knp\ETL\Extractor\Doctrine;
 
 use Knp\ETL\ContextInterface;
 use Knp\ETL\ExtractorInterface;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -12,18 +12,16 @@ use Psr\Log\NullLogger;
  */
 class ORMExtractor implements ExtractorInterface, \Iterator
 {
-    use LoggerAwareTrait;
-
     private $query;
-
+    private $logger;
     protected $iterator;
 
     /**
      * Could be a Query or a QueryBuilder
      */
-    public function __construct($query)
+    public function __construct($query, LoggerInterface $logger = null)
     {
-        $this->logger = new NullLogger();
+        $this->logger = $logger ?: new NullLogger();
         $this->query = $query;
     }
 

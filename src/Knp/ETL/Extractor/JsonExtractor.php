@@ -4,8 +4,7 @@ namespace Knp\ETL\Extractor;
 
 use Knp\ETL\ExtractorInterface;
 use Knp\ETL\ContextInterface;
-
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -13,13 +12,12 @@ use Psr\Log\NullLogger;
  */
 class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
 {
-    use LoggerAwareTrait;
-
     private $json;
     private $identifierColumn;
     private $resource;
     private $adapter;
     private $path;
+    private $logger;
 
     /**
      * Regarding the following json structure :
@@ -37,11 +35,11 @@ class JsonExtractor implements ExtractorInterface, \Iterator, \Countable
      * @param string $resource Filename or URL for the json file
      * @param string $path The path in json file to go to your target nodes. Example : "nodes.*.node"
      * @param Closure $adapter A closure which wraps the way to get the content of json file
+     * @param LoggerInterface $logger The logger instance
      */
-    public function __construct($resource, $path = null, \Closure $adapter = null)
+    public function __construct($resource, $path = null, \Closure $adapter = null, LoggerInterface $logger = null)
     {
-        $this->logger = new NullLogger();
-        // @todo don't log when the logger is not really yet injected (or inject logger directly in constructor)
+        $this->logger = $logger ?: new NullLogger();
         $this->logger->debug('Extracting JSON', ['path' => $resource]);
 
         $this->resource = $resource;
