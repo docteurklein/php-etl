@@ -3,28 +3,26 @@
 namespace Knp\ETL\Extractor;
 
 use PHPExcel_IOFactory;
-use Psr\Log\LoggerAwareTrait;
-
 use Knp\ETL\ContextInterface;
 use Knp\ETL\ExtractorInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * @author Kévin Gomez <contact@kevingomez.fr>
  */
 class ExcelExtractor implements ExtractorInterface, \Iterator, \Countable
 {
-    use LoggerAwareTrait;
-
     protected $worksheetIterator;
     protected $identifierColumn;
     protected $nbLines;
     protected $headerRowNumber = 1;
+    protected $logger;
 
-    public function __construct($filename, $identifierColumn = null, $headerRowNumber = 1, $activeSheet = null)
+    public function __construct($filename, $identifierColumn = null, $headerRowNumber = 1, $activeSheet = null, LoggerInterface $logger = null)
     {
-        if (null !== $this->logger) {
-            $this->logger->debug('extracting from: '.$filename);
-        }
+        $this->logger = $logger ?: new NullLogger();
+        $this->logger->debug('Extracting Excel', ['filename' => $filename]);
 
         $excel = PHPExcel_IOFactory::load($filename);
 
@@ -81,9 +79,7 @@ class ExcelExtractor implements ExtractorInterface, \Iterator, \Countable
     public function next()
     {
         $next = $this->worksheetIterator->next();
-        if (null !== $this->logger) {
-            $this->logger->debug(sprintf('%d', $this->key()));
-        }
+        $this->logger->debug('Next Excel element', ['key' => $this->key()]);
 
         return $next;
     }

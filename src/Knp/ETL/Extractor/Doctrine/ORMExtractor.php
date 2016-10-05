@@ -4,24 +4,24 @@ namespace Knp\ETL\Extractor\Doctrine;
 
 use Knp\ETL\ContextInterface;
 use Knp\ETL\ExtractorInterface;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  * @author Timothée Barray <tim@amicalement-web.net>
  */
 class ORMExtractor implements ExtractorInterface, \Iterator
 {
-    use LoggerAwareTrait;
-
     private $query;
-
+    private $logger;
     protected $iterator;
 
     /**
      * Could be a Query or a QueryBuilder
      */
-    public function __construct($query)
+    public function __construct($query, LoggerInterface $logger = null)
     {
+        $this->logger = $logger ?: new NullLogger();
         $this->query = $query;
     }
 
@@ -51,10 +51,7 @@ class ORMExtractor implements ExtractorInterface, \Iterator
     public function next()
     {
         $next = $this->getIterator()->next();
-
-        if (null !== $this->logger) {
-            $this->logger->debug($this->getQuery()->getSql());
-        }
+        $this->logger->debug('Next SQL', ['sql' => $this->getQuery()->getSql()]);
 
         return $next;
     }

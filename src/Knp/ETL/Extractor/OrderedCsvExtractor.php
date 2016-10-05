@@ -2,8 +2,6 @@
 
 namespace Knp\ETL\Extractor;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
-
 use Symfony\Component\Finder\Finder;
 
 use Knp\ETL\ExtractorInterface;

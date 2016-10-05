@@ -2,10 +2,9 @@
 
 namespace Knp\ETL\Extractor;
 
-use Symfony\Component\Finder\Finder;
-
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Knp\ETL\ExtractorInterface;
-use Psr\Log\LoggerAwareTrait;
 use Knp\ETL\ContextInterface;
 
 /**
@@ -14,17 +13,15 @@ use Knp\ETL\ContextInterface;
  */
 class CsvExtractor implements ExtractorInterface, \Iterator, \Countable
 {
-    use LoggerAwareTrait;
-
     private $csv;
     private $identifierColumn;
     private $nbLines;
+    private $logger;
 
-    public function __construct($filename, $delimiter = ';', $enclosure = '"', $identifierColumn = null)
+    public function __construct($filename, $delimiter = ';', $enclosure = '"', $identifierColumn = null, LoggerInterface $logger = null)
     {
-        if (null !== $this->logger) {
-            $this->logger->debug('extracting from: '.$filename);
-        }
+        $this->logger = $logger ?: new NullLogger();
+        $this->logger->debug('Extracting CSV', ['filepath' => $filename]);
 
         $this->csv = new \SplFileObject($filename);
         $this->csv->setFlags(\SplFileObject::READ_CSV);
@@ -62,9 +59,7 @@ class CsvExtractor implements ExtractorInterface, \Iterator, \Countable
     public function next()
     {
         $next = $this->csv->next();
-        if (null !== $this->logger) {
-            $this->logger->debug(sprintf('%s:%d', $this->csv->getBaseName(), $this->key()));
-        }
+        $this->logger->debug('Next csv element', ['name' => $this->csv->getBaseName(), 'value' => $this->key()]);
 
         return $next;
     }

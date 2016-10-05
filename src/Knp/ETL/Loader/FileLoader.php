@@ -1,29 +1,27 @@
 <?php
 namespace Knp\ETL\Loader;
 
-use Psr\Log\LoggerAwareTrait;
 use Knp\ETL\ContextInterface;
 use Knp\ETL\LoaderInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use SplFileObject;
 
 class FileLoader implements LoaderInterface
 {
-    use LoggerAwareTrait;
-
     protected $file;
+    protected $logger;
 
-    public function __construct(SplFileObject $file)
+    public function __construct(SplFileObject $file, LoggerInterface $logger = null)
     {
+        $this->logger = $logger ?: new NullLogger();
         $this->file = $file;
     }
 
     public function load($data, ContextInterface $context)
     {
         $r = $this->file->fwrite($data);
-
-        if (null !== $this->logger) {
-            $this->logger->debug(sprintf('Wrote %s bytes in %s', $r, $this->file->getBasename()));
-        }
+        $this->logger->debug('Write to file', ['data' => $data, 'filename' => $this->file->getBasename(), 'bytes' => $r]);
 
         return $r;
     }
